@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil de MercadoLibre Venezuela</title>
+<style>
+  :root{
+    --amarillo:#ffe600;
+    --azul:#3483fa;
+    --azul-oscuro:#2968c8;
+    --verde:#00a650;
+    --rojo:#f23d4f;
+    --texto:#333;
+    --gris:#666;
+    --fondo:#ebebeb;
+    --borde:#e3e8ef;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:32px 24px;
+    background:linear-gradient(160deg,#ffe600 0%,#fff159 30%,var(--fondo) 30%,var(--fondo) 100%);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--texto);
+  }
+  .contenedor{
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:flex-start;
+    width:100%;
+    max-width:1000px;
+  }
+  .tarjeta{
+    width:100%;
+    max-width:460px;
+    background:#fff;
+    border-radius:12px;
+    padding:32px 28px;
+    box-shadow:0 12px 32px rgba(0,0,0,.16);
+  }
+  .logo{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.4px;
+    color:var(--gris);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1{
+    font-size:24px;
+    line-height:1.25;
+    margin:0 0 8px;
+  }
+  p.ayuda{
+    margin:0 0 24px;
+    font-size:14px;
+    color:var(--gris);
+  }
+  label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .campo{
+    display:flex;
+    align-items:center;
+    border:1px solid #ddd;
+    border-radius:8px;
+    overflow:hidden;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .campo:focus-within{
+    border-color:var(--azul);
+    box-shadow:0 0 0 3px rgba(52,131,250,.18);
+  }
+  .prefijo{
+    padding:0 4px 0 12px;
+    font-size:15px;
+    color:#999;
+    white-space:nowrap;
+    user-select:none;
+  }
+  input{
+    flex:1;
+    border:0;
+    outline:0;
+    padding:14px 12px 14px 2px;
+    font-size:16px;
+    background:transparent;
+    color:var(--texto);
+    min-width:0;
+  }
+  .acciones{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+  }
+  button{
+    flex:1;
+    padding:14px 16px;
+    font-size:15px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .15s, color .15s, transform .05s;
+  }
+  button:active{transform:scale(.99);}
+  .primario{
+    color:#fff;
+    background:var(--azul);
+    border:0;
+  }
+  .primario:hover{background:var(--azul-oscuro);}
+  .secundario{
+    color:var(--azul);
+    background:#fff;
+    border:1px solid var(--azul);
+  }
+  .secundario:hover{background:#f0f6ff;}
+  .error{
+    display:none;
+    margin-top:12px;
+    font-size:13px;
+    color:#c0392b;
+  }
+  .error.visible{display:block;}
+  .resultado{
+    display:none;
+    margin-top:18px;
+    padding:12px 14px;
+    background:#f5f7fa;
+    border:1px solid var(--borde);
+    border-radius:8px;
+    font-size:13px;
+    word-break:break-all;
+  }
+  .resultado.visible{display:block;}
+  .resultado span{
+    display:block;
+    color:var(--gris);
+    margin-bottom:4px;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+  }
+  .resultado a{
+    color:var(--azul);
+    text-decoration:none;
+    font-weight:500;
+  }
+  .resultado a:hover{text-decoration:underline;}
+
+  /* ---------- Ficha de analisis ---------- */
+  .ficha{
+    display:none;
+    width:100%;
+    max-width:460px;
+    background:#fff;
+    border-radius:12px;
+    padding:28px 26px;
+    box-shadow:0 12px 32px rgba(0,0,0,.16);
+  }
+  .ficha.visible{display:block;}
+  .ficha-cab{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--borde);
+  }
+  .ficha-cab h2{
+    margin:0 0 4px;
+    font-size:20px;
+    word-break:break-word;
+  }
+  .ficha-cab p{
+    margin:0;
+    font-size:13px;
+    color:var(--gris);
+  }
+  .insignia{
+    flex:none;
+    padding:6px 10px;
+    border-radius:999px;
+    background:rgba(0,166,80,.12);
+    color:var(--verde);
+    font-size:12px;
+    font-weight:700;
+    white-space:nowrap;
+  }
+  .insignia.gris{
+    background:#f0f0f0;
+    color:var(--gris);
+  }
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin:18px 0;
+  }
+  .kpi{
+    background:#f5f7fa;
+    border:1px solid var(--borde);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .kpi b{
+    display:block;
+    font-size:20px;
+    line-height:1.2;
+  }
+  .kpi span{
+    display:block;
+    margin-top:2px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+    color:var(--gris);
+  }
+  .barra{
+    display:flex;
+    height:10px;
+    border-radius:6px;
+    overflow:hidden;
+    background:#eee;
+    margin-bottom:8px;
+  }
+  .barra i{display:block;height:100%;}
+  .barra .pos{background:var(--verde);}
+  .barra .neu{background:var(--amarillo);}
+  .barra .neg{background:var(--rojo);}
+  .leyenda{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    font-size:12px;
+    color:var(--gris);
+  }
+  .leyenda em{
+    font-style:normal;
+    font-weight:700;
+    color:var(--texto);
+  }
+  .punto{
+    display:inline-block;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    margin-right:5px;
+    vertical-align:middle;
+  }
+  .bloque{margin-top:20px;}
+  .bloque h3{
+    margin:0 0 8px;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    color:var(--gris);
+  }
+  .bloque p{
+    margin:0;
+    font-size:14px;
+    line-height:1.5;
+  }
+  ul.lista{
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:13.5px;
+    line-height:1.5;
+  }
+  ul.lista li{
+    position:relative;
+    padding-left:20px;
+    margin-bottom:6px;
+  }
+  ul.lista li:before{
+    position:absolute;
+    left:0;
+    top:0;
+    font-weight:700;
+  }
+  ul.pro li:before{content:"\2713";color:var(--verde);}
+  ul.con li:before{content:"\26A0";color:#e08b00;font-size:12px;}
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .chip{
+    padding:5px 9px;
+    border-radius:6px;
+    background:#f0f4f9;
+    border:1px solid var(--borde);
+    font-size:12px;
+  }
+  .chip small{
+    color:var(--gris);
+    font-size:11px;
+  }
+  .veredicto{
+    margin-top:20px;
+    padding:14px 16px;
+    border-radius:8px;
+    border-left:4px solid var(--azul);
+    background:#f0f6ff;
+    font-size:14px;
+    line-height:1.5;
+  }
+  .nota{
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px solid var(--borde);
+    font-size:12px;
+    line-height:1.5;
+    color:var(--gris);
+  }
+  .nota a{color:var(--azul);}
+  .vacio{
+    font-size:14px;
+    line-height:1.55;
+    margin:18px 0 0;
+  }
+  .boton-enlace{
+    display:inline-block;
+    margin-top:16px;
+    padding:12px 16px;
+    background:var(--azul);
+    color:#fff;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+  }
+  .boton-enlace:hover{background:var(--azul-oscuro);}
+</style>
+</head>
+<body>
+  <div class="contenedor">
+    <main class="tarjeta">
+      <div class="logo">MercadoLibre Venezuela</div>
+      <h1>Consultar perfil de usuario</h1>
+      <p class="ayuda">Escribe el nombre de usuario y abriremos su perfil en una nueva pestaña del navegador.</p>
+
+      <form id="formulario" autocomplete="off">
+        <label for="usuario">Nombre de usuario</label>
+        <div class="campo">
+          <span class="prefijo">mercadolibre.com.ve/perfil/</span>
+          <input
+            type="text"
+            id="usuario"
+            name="usuario"
+            placeholder="ej. TODOVENTA"
+            spellcheck="false"
+            autocapitalize="none"
+            autofocus
+            required>
+        </div>
+        <div class="acciones">
+          <button type="submit" class="primario">Ver perfil</button>
+          <button type="button" class="secundario" id="btnAnalisis">Ver análisis</button>
+        </div>
+        <p class="error" id="error"></p>
+      </form>
+
+      <div class="resultado" id="resultado">
+        <span>Link generado</span>
+        <a id="link" href="#" target="_blank" rel="noopener noreferrer"></a>
+      </div>
+    </main>
+
+    <section class="ficha" id="ficha" aria-live="polite"></section>
+  </div>
+
+<script>
+  // Link base al que se concatena el nombre de usuario
+  var BASE = "https://www.mercadolibre.com.ve/perfil/";
+
+  var formulario = document.getElementById("formulario");
+  var campo      = document.getElementById("usuario");
+  var botonAna   = document.getElementById("btnAnalisis");
+  var error      = document.getElementById("error");
+  var caja       = document.getElementById("resultado");
+  var enlace     = document.getElementById("link");
+  var ficha      = document.getElementById("ficha");
+
+  var FECHA_ANALISIS = "12/10/2026";
+
+  // ---------------------------------------------------------------
+  // Fichas de analisis ya elaboradas, a partir de los perfiles publicos
+  // ---------------------------------------------------------------
+  var ANALISIS = {
+    "TODOVENTA": {
+      tipo: "Revendedor / comerciante",
+      ubicacion: "La Victoria, Aragua, Venezuela",
+      puntos: 285,
+      antiguedad: "14 años",
+      comprador: { total: 68, positivas: 68, neutrales: 0, negativas: 0 },
+      vendedor:  { total: 8,  positivas: 8,  neutrales: 0, negativas: 0, ventas: "+5" },
+      cadencia: "6 calificaciones entre el 20/07/2026 y el 27/09/2026: aproximadamente 2,6 por mes. La última es del 27/09/2026, es decir, actividad vigente.",
+      contrapartes: [
+        { nombre: "SUPLEMFITVENEZUELA", rubro: "Suplementos" },
+        { nombre: "TECNOMALLGUANARE1", rubro: "Tecnología" },
+        { nombre: "EMETECHNOLOGYS",    rubro: "Tecnología" },
+        { nombre: "MECANITOOLS",       rubro: "Herramientas" },
+        { nombre: "ROGA3894746",       rubro: "Particular" },
+        { nombre: "L VELASQUEZ",       rubro: "Particular" }
+      ],
+      aFavor: [
+        "68 calificaciones como comprador, 100% positivas, sin neutrales ni negativas: muestra suficiente para ser significativa.",
+        "14 años en la plataforma sin calificaciones negativas registradas en ninguna de sus dos facetas.",
+        "Actividad reciente y continua: última calificación recibida el 27/09/2026.",
+        "Ubicación declarada concreta (La Victoria, Aragua), no difusa.",
+        "Comentarios de contrapartes que destacan cumplimiento: «venta concretada con éxito», «excelente cliente»."
+      ],
+      aVigilar: [
+        "El perfil de comprador no otorga insignias de reputación (MercadoLíder, termómetro de cancelaciones): la evidencia son solo comentarios.",
+        "285 puntos para un historial de 76 calificaciones es un ratio bajo; Mercado Libre no publica la fórmula, así que no conviene sobreinterpretarlo.",
+        "Solo 8 calificaciones y «+5 ventas concretadas» como vendedor en 14 años: más antigüedad de cuenta que volumen dentro de la plataforma.",
+        "Existe una cuenta con nombre casi idéntico (TODOVENTACOM20016) hallada por búsqueda web. No está verificada como relacionada, pero conviene descartar cuentas vinculadas."
+      ],
+      veredicto: "Comprador confiable y de bajo riesgo aparente. Un historial de 68 calificaciones 100% positivas es difícil de fabricar y fácil de romper. Perfil de comerciante experimentado que usa Mercado Libre principalmente como canal de abastecimiento para reventa, con actividad sostenida y muy reciente. Buen candidato a crédito o a venta mayorista, con la salvedad de que su respaldo en la plataforma se concentra en la faceta de compra."
+    }
+  };
+
+  // ---------------------------------------------------------------
+  // Utilidades
+  // ---------------------------------------------------------------
+  function esc(valor) {
+    return String(valor).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function limpiarUsuario(valor) {
+    return valor
+      .trim()
+      .replace(/^@+/, "")         // quita @ iniciales
+      .replace(/^\/+|\/+$/g, ""); // quita / sobrantes
+  }
+
+  function construirUrl(usuario) {
+    return BASE + encodeURIComponent(usuario);
+  }
+
+  function mostrarError(mensaje) {
+    error.textContent = mensaje;
+    error.classList.add("visible");
+    caja.classList.remove("visible");
+  }
+
+  // Devuelve el usuario validado, o null mostrando el error correspondiente
+  function validar() {
+    var usuario = limpiarUsuario(campo.value);
+
+    if (usuario === "") {
+      mostrarError("Debes escribir un nombre de usuario.");
+      campo.focus();
+      return null;
+    }
+    if (!/^[A-Za-z0-9._-]+$/.test(usuario)) {
+      mostrarError("El nombre de usuario solo puede tener letras, numeros, punto, guion y guion bajo.");
+      campo.focus();
+      return null;
+    }
+
+    error.classList.remove("visible");
+    return usuario;
+  }
+
+  function mostrarLink(url) {
+    enlace.href = url;
+    enlace.textContent = url;
+    caja.classList.add("visible");
+  }
+
+  function abrirPerfil(url) {
+    var ventana = window.open(url, "_blank", "noopener");
+    if (!ventana) {
+      // Si el navegador bloquea la ventana emergente, navegamos en la misma pestana
+      window.location.href = url;
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Render de la ficha
+  // ---------------------------------------------------------------
+  function bloqueReputacion(etiqueta, datos) {
+    var total = datos.total || 1;
+    function pct(n) { return (n / total) * 100; }
+
+    return '' +
+      '<div class="bloque">' +
+        '<h3>' + esc(etiqueta) + '</h3>' +
+        '<div class="barra">' +
+          '<i class="pos" style="width:' + pct(datos.positivas) + '%"></i>' +
+          '<i class="neu" style="width:' + pct(datos.neutrales) + '%"></i>' +
+          '<i class="neg" style="width:' + pct(datos.negativas) + '%"></i>' +
+        '</div>' +
+        '<div class="leyenda">' +
+          '<span><span class="punto" style="background:#00a650"></span>Positivas <em>' + datos.positivas + '</em></span>' +
+          '<span><span class="punto" style="background:#ffe600"></span>Neutrales <em>' + datos.neutrales + '</em></span>' +
+          '<span><span class="punto" style="background:#f23d4f"></span>Negativas <em>' + datos.negativas + '</em></span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderAnalisis(usuario, datos, url) {
+    var recomendacion = datos.comprador.total
+      ? Math.round((datos.comprador.positivas / datos.comprador.total) * 100)
+      : 0;
+
+    ficha.innerHTML = '' +
+      '<div class="ficha-cab">' +
+        '<div>' +
+          '<h2>' + esc(usuario) + '</h2>' +
+          '<p>' + esc(datos.ubicacion) + '</p>' +
+        '</div>' +
+        '<span class="insignia">' + recomendacion + '% recomendado</span>' +
+      '</div>' +
+
+      '<div class="kpis">' +
+        '<div class="kpi"><b>' + datos.comprador.total + '</b><span>Calificaciones comprador</span></div>' +
+        '<div class="kpi"><b>' + recomendacion + '%</b><span>Positivas</span></div>' +
+        '<div class="kpi"><b>' + datos.puntos + '</b><span>Puntos de actividad</span></div>' +
+        '<div class="kpi"><b>' + esc(datos.antiguedad) + '</b><span>Antigüedad</span></div>' +
+      '</div>' +
+
+      '<div class="bloque">' +
+        '<h3>Perfil inferido</h3>' +
+        '<p>' + esc(datos.tipo) + '</p>' +
+      '</div>' +
+
+      bloqueReputacion("Calificaciones como comprador", datos.comprador) +
+      bloqueReputacion("Calificaciones como vendedor", datos.vendedor) +
+
+      '<div class="bloque">' +
+        '<h3>Cadencia reciente</h3>' +
+        '<p>' + esc(datos.cadencia) + '</p>' +
+      '</div>' +
+
+      '<div class="bloque">' +
+        '<h3>Contrapartes que lo calificaron</h3>' +
+        '<div class="chips">' +
+          datos.contrapartes.map(function (c) {
+            return '<span class="chip">' + esc(c.nombre) + ' <small>· ' + esc(c.rubro) + '</small></span>';
+          }).join("") +
+        '</div>' +
+      '</div>' +
+
+      '<div class="bloque">' +
+        '<h3>Señales a favor</h3>' +
+        '<ul class="lista pro">' +
+          datos.aFavor.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") +
+        '</ul>' +
+      '</div>' +
+
+      '<div class="bloque">' +
+        '<h3>A vigilar</h3>' +
+        '<ul class="lista con">' +
+          datos.aVigilar.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") +
+        '</ul>' +
+      '</div>' +
+
+      '<div class="veredicto"><strong>Veredicto.</strong> ' + esc(datos.veredicto) + '</div>' +
+
+      '<div class="nota">' +
+        'Análisis elaborado a partir de los perfiles públicos de comprador y vendedor en ' +
+        '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">mercadolibre.com.ve</a>, ' +
+        'consultados el ' + esc(FECHA_ANALISIS) + '. Mercado Libre no publica montos, productos comprados, ' +
+        'cancelaciones ni reclamos: el rubro de cada contraparte y el perfil inferido son interpretaciones, no datos verificados. ' +
+        'Información de un tercero: úsala para una decisión comercial, no para inferencias personales.' +
+      '</div>';
+
+    ficha.classList.add("visible");
+  }
+
+  function renderSinAnalisis(usuario, url) {
+    var analizados = Object.keys(ANALISIS);
+
+    ficha.innerHTML = '' +
+      '<div class="ficha-cab">' +
+        '<div>' +
+          '<h2>' + esc(usuario) + '</h2>' +
+          '<p>Sin análisis elaborado todavía</p>' +
+        '</div>' +
+        '<span class="insignia gris">Pendiente</span>' +
+      '</div>' +
+
+      '<p class="vacio">' +
+        'Todavía no hay una ficha de análisis para <strong>' + esc(usuario) + '</strong>. ' +
+        'El análisis se arma leyendo los perfiles públicos de comprador y vendedor: calificaciones, ' +
+        'antigüedad, puntos de actividad, ubicación y contrapartes.' +
+      '</p>' +
+
+      '<p class="vacio">' +
+        'Abre el perfil y pídeme el análisis para incorporarlo a esta interfaz.' +
+      '</p>' +
+
+      '<a class="boton-enlace" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
+        'Abrir perfil en MercadoLibre' +
+      '</a>' +
+
+      '<div class="nota">Perfiles ya analizados: ' + esc(analizados.join(", ")) + '.</div>';
+
+    ficha.classList.add("visible");
+  }
+
+  // ---------------------------------------------------------------
+  // Eventos
+  // ---------------------------------------------------------------
+  formulario.addEventListener("submit", function (evento) {
+    evento.preventDefault();
+
+    var usuario = validar();
+    if (!usuario) { return; }
+
+    // Concatenacion del nombre de usuario al link base
+    var url = construirUrl(usuario);
+
+    mostrarLink(url);
+
+    // Cargar el link resultante en el navegador
+    abrirPerfil(url);
+  });
+
+  var ultimoAnalizado = null;
+
+  botonAna.addEventListener("click", function () {
+    var usuario = validar();
+    if (!usuario) { return; }
+
+    var url = construirUrl(usuario);
+
+    mostrarLink(url);
+
+    var datos = ANALISIS[usuario.toUpperCase()];
+    if (datos) {
+      renderAnalisis(usuario, datos, url);
+    } else {
+      renderSinAnalisis(usuario, url);
+    }
+
+    // La pestaña del perfil se abre solo la primera vez para cada usuario,
+    // así el botón se puede volver a pulsar sin llenar el navegador de pestañas.
+    if (ultimoAnalizado !== usuario) {
+      abrirPerfil(url);
+      ultimoAnalizado = usuario;
+    }
+
+    ficha.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+
+  // Limpia el mensaje de error mientras se escribe
+  campo.addEventListener("input", function () {
+    error.classList.remove("visible");
+  });
+</script>
+</body>
+</html>
